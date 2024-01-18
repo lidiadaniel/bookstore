@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bookstore</title>
+  <style>
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    .card {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 200px;
+      height: 250px;
+      margin: 10px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      background-color: black;
+    }
+    .card img {
+      width: 170px;
+      height: 200px;
+      margin-bottom: 10px;
+    }
+    .description-container {
+      color: aliceblue;
+      padding: 20px; 
+      width: 60%;
+      margin-left: 20px;
+    }
+    .p{
+      background-color: black;
+    }
+    .heading{
+      color: blanchedalmond;
+      font-family: 'Times New Roman', Times, serif;
+      text-align: center;
+    }
+  </style>
+</head>
+<h1 class="heading">BOOK STORE</h1>
+<body class="p">
+  <div class="card-container" id="cardContainer"></div>
+  <div class="description-container" id="descriptionContainer"></div>
+
+  <script> 
+    const cardContainer = document.getElementById('cardContainer');
+    const descriptionContainer = document.getElementById('descriptionContainer');
+
+    fetch('https://hapi-books.p.rapidapi.com/nominees/romance/2020', {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': '23b8676623msh83593edaba55355p15791ajsnac6b8ef9e081',
+        'Content-Type': 'application/json',
+        'X-RapidAPI-Host': 'hapi-books.p.rapidapi.com',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        data.forEach(book => {
+          const card = document.createElement('div');
+          card.classList.add('card');
+
+          const coverImg = document.createElement('img');
+          coverImg.src = book.cover; 
+          coverImg.alt = '${book.name} Cover';
+
+          card.appendChild(coverImg);
+          card.addEventListener('click', () => showDescription(book));
+
+          cardContainer.appendChild(card);
+        });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        const errorMessage = document.createElement('p');
+        errorMessage.innerText = 'Failed to fetch book data.';
+        cardContainer.appendChild(errorMessage);
+      });
+     
+    function showDescription(book) {
+      descriptionContainer.innerHTML = `<h2>Title: ${book.name}</h2>
+                                        <h2>Author: ${book.author}</h2>
+                                        <h2>Votes: ${book.votes}</h2>`; 
+    }
+  </script>
+</body>
+</html>
